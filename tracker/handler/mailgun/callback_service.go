@@ -132,7 +132,7 @@ func (service callbackServiceImpl) SendMessage(callback *model.Callback) error {
 	buffer.WriteString("Received Time: " + receivedAt + NEWLINE)
 	message := buffer.String()
 	// send msg
-	return service.notifyClient.Send("+919019138633", message)
+	return service.notifyClient.Send("+91XXXXXXX", message)
 }
 
 // send a copy for co-relation and further processing
