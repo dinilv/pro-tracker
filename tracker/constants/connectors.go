@@ -1,0 +1,11 @@
+package constants
+
+const (
+	// env variables
+	DOMAIN                = "DOMAIN"
+	SIGN_KEY              = "SIGN_KEY"
+	STORAGE_PROVIDER      = "STORAGE_PROVIDER"
+	QUEUE_PROVIDER        = "QUEUE_PROVIDER"
+	NOTIFICATION_PROVIDER = "NOTIFICATION_PROVIDER"
+	FILE_STORE_PROVIDER   = "FILE_STORE_PROVIDER"
+)

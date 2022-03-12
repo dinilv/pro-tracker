@@ -1,0 +1,74 @@
+# serverless.yml
+ 
+service: callback
+ 
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+        - s3:*
+        - sqs:*
+        - sns:*
+      Resource: '*'  
+package:
+ exclude:
+   - ./**
+ include:
+   - ./**
+ 
+functions:
+  mailgun:
+    handler: tracker
+    name: tracker-service
+    description: listen to callbacks from multiple systems through http triggers.
+    memorySize: 256
+    timeout: 10
+    provisionedConcurrency: 1
+    reservedConcurrency: 3 #max 3 instances
+    events:
+      - http:
+          path: mailgun
+          method: post
+          cors: true
+resources:
+  Resources:
+    BucketUpload:
+      Type: AWS::S3::Bucket
+      UpdateReplacePolicy: Retain
+      Properties:
+        BucketName: pro-tracker-${sls:stage}
+    DynamoDBLogTable:
+      Type: AWS::DynamoDB::Table
+      UpdateReplacePolicy: Retain
+      Properties:
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: CallbackLog${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: MessageID
+            AttributeType: S          
+        KeySchema:
+           - AttributeName: MessageID
+             KeyType: HASH  
+    WebhookClickQueue:
+      Type: AWS::SQS::Queue
+      UpdateReplacePolicy: Retain
+      Properties:
+        QueueName: click-callback-${sls:stage}.fifo
+        FifoQueue: true 
+    WebhookOpenQueue:
+      Type: AWS::SQS::Queue
+      UpdateReplacePolicy: Retain
+      Properties:
+        QueueName: open-callback-${sls:stage}.fifo
+        FifoQueue: true        
+
+
+
+
+
